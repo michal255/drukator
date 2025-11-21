@@ -31,13 +31,10 @@ body {
 
 .grid {
     display: grid;
-    grid-template-columns:
-        38.1mm 2.5mm
-        38.1mm 2.5mm
-        38.1mm 2.5mm
-        38.1mm 2.5mm
-        38.1mm;
+    grid-template-columns: repeat(5, 38.1mm);
     grid-template-rows: repeat(13, 21.2mm);
+    column-gap: 2.5mm;  /* <<< przerwy robi CSS, nie DIV */
+    row-gap: 0mm;
 }
 
 .label {
