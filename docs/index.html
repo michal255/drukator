@@ -90,12 +90,12 @@ function loadFromURL() {
     if (!encoded) return;
 
     try {
-        const json = atob(encoded);
-        const items = JSON.parse(json);
-        loadLabels(items);
-    } catch (e) {
-        console.error("Błąd dekodowania danych:", e);
-    }
+    const json = decodeURIComponent(escape(atob(encoded)));
+    const items = JSON.parse(json);
+    loadLabels(items);
+} catch (e) {
+    console.error("Błąd dekodowania:", e);
+}
 }
 
 /* --- RENDEROWANIE ETYKIET --- */
