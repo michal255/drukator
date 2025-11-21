@@ -1,1 +1,164 @@
-<!DOCTYPE html> <html lang="pl"> <head> <meta charset="UTF-8"> <title>Drukator etykiet</title> <style> @page { margin: 0; } body { margin: 0; padding: 0; } :root { --offsetX: 0; --offsetY: 0; } .sheet { width: 210mm; height: 297mm; padding-top: calc(10.7mm + var(--offsetY)*1mm); padding-left: calc(4.75mm + var(--offsetX)*1mm); box-sizing: border-box; } .grid { display: grid; grid-template-columns: 38.1mm 2.5mm 38.1mm 2.5mm 38.1mm 2.5mm 38.1mm 2.5mm 38.1mm; grid-template-rows: repeat(13, 21.2mm); } .label { width: 38.1mm; height: 21.2mm; padding: 1mm; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; text-align: center; font-family: Arial, sans-serif; overflow: hidden; } .mainText { font-size: 10px; font-weight: bold; line-height: 1.1; } .subText { font-size: 8px; line-height: 1.1; } @media print { #panel, #drukujBtn { display: none !important; } } </style> <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script> </head> <body> <div id="panel" style="padding:10px; font-family:Arial;"> <h3>Drukator etykiet</h3> <button id="drukujBtn">DRUKUJ</button> </div> <div class="sheet"> <div class="grid" id="labelsGrid"></div> </div> <script> /* --- ŁADOWANIE DANYCH --- */ // DANE Z WIX → PARAMETR ?data=BASE64_JSON function loadFromURL() { const url = new URL(window.location.href); const encoded = url.searchParams.get("data"); if (!encoded) return; try { const json = decodeURIComponent(escape(atob(encoded))); const items = JSON.parse(json); loadLabels(items); } catch (e) { console.error("Błąd dekodowania:", e); } } /* --- RENDEROWANIE ETYKIET --- */ function loadLabels(items) { const grid = document.getElementById("labelsGrid"); grid.innerHTML = ""; let index = 0; for (let row = 0; row < 13; row++) { for (let col = 0; col < 5; col++) { const item = items[index] || null; index++; const div = document.createElement("div"); div.className = "label"; if (item) { const main = document.createElement("div"); main.className = "mainText"; main.innerText = item.nazwa; const sub = document.createElement("div"); sub.className = "subText"; sub.innerText = ${item.dataOd} — ${item.dataDo}; div.appendChild(main); div.appendChild(sub); } grid.appendChild(div); if (col < 4) { const spacer = document.createElement("div"); spacer.style.width = "2.5mm"; spacer.style.height = "21.2mm"; grid.appendChild(spacer); } } } } document.getElementById("drukujBtn").onclick = () => { const element = document.querySelector(".sheet"); // wszystko na stronie A4 const opt = { margin: [0, 0, 0, 0], filename: 'etykiety.pdf', image: { type: 'jpeg', quality: 1 }, html2canvas: { scale: 4 }, // ostry wydruk jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }; html2pdf().set(opt).from(element).save(); }; loadFromURL(); </script> </body> </html>
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<title>Drukator etykiet</title>
+
+<style>
+@page {
+    margin: 0;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --offsetX: 0;
+    --offsetY: 0;
+}
+
+.sheet {
+    width: 210mm;
+    height: 297mm;
+    padding-top: calc(10.7mm + var(--offsetY)*1mm);
+    padding-left: calc(4.75mm + var(--offsetX)*1mm);
+    box-sizing: border-box;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns:
+        38.1mm 2.5mm
+        38.1mm 2.5mm
+        38.1mm 2.5mm
+        38.1mm 2.5mm
+        38.1mm;
+    grid-template-rows: repeat(13, 21.2mm);
+}
+
+.label {
+    width: 38.1mm;
+    height: 21.2mm;
+    padding: 1mm;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+}
+
+.mainText {
+    font-size: 10px;
+    font-weight: bold;
+    line-height: 1.1;
+}
+
+.subText {
+    font-size: 8px;
+    line-height: 1.1;
+}
+
+@media print {
+    #panel, #drukujBtn {
+        display: none !important;
+    }
+}
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+
+<body>
+
+<div id="panel" style="padding:10px; font-family:Arial;">
+    <h3>Drukator etykiet</h3>
+    <button id="drukujBtn">DRUKUJ</button>
+</div>
+
+<div class="sheet">
+    <div class="grid" id="labelsGrid"></div>
+</div>
+
+<script>
+/* --- ŁADOWANIE DANYCH Z WIX (BASE64 JSON) --- */
+function loadFromURL() {
+    const url = new URL(window.location.href);
+    const encoded = url.searchParams.get("data");
+    if (!encoded) return;
+
+    try {
+        const json = decodeURIComponent(escape(atob(encoded)));
+        const items = JSON.parse(json);
+        loadLabels(items);
+    } catch (e) {
+        console.error("Błąd dekodowania:", e);
+    }
+}
+
+/* --- TWORZENIE SIATKI ETYKIET --- */
+function loadLabels(items) {
+    const grid = document.getElementById("labelsGrid");
+    grid.innerHTML = "";
+
+    let index = 0;
+
+    for (let row = 0; row < 13; row++) {
+        for (let col = 0; col < 5; col++) {
+
+            const item = items[index] || null;
+            index++;
+
+            const div = document.createElement("div");
+            div.className = "label";
+
+            if (item) {
+                const main = document.createElement("div");
+                main.className = "mainText";
+                main.innerText = item.nazwa;
+
+                const sub = document.createElement("div");
+                sub.className = "subText";
+                sub.innerText = `${item.dataOd} — ${item.dataDo}`;
+
+                div.appendChild(main);
+                div.appendChild(sub);
+            }
+
+            grid.appendChild(div);
+
+            /* DODAWANIE PRZERWY MIĘDZY ETYKIETAMI */
+            if (col < 4) {
+                const spacer = document.createElement("div");
+                spacer.style.width = "2.5mm";
+                spacer.style.height = "21.2mm";
+                grid.appendChild(spacer);
+            }
+        }
+    }
+}
+
+/* --- GENEROWANIE PDF (STANDARDOWY html2pdf) --- */
+document.getElementById("drukujBtn").onclick = () => {
+
+    const element = document.querySelector(".sheet");
+
+    const opt = {
+        margin: [0, 0, 0, 0],
+        filename: 'etykiety.pdf',
+        image: { type: 'jpeg', quality: 1 },
+        html2canvas: { scale: 4 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    html2pdf().set(opt).from(element).save();
+};
+
+loadFromURL();
+</script>
+
+</body>
+</html>
