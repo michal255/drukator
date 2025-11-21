@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pl">
+
 <head>
 <meta charset="UTF-8">
 <title>Drukator etykiet</title>
@@ -68,6 +69,7 @@ body {
     }
 }
 </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
 
@@ -139,7 +141,21 @@ function loadLabels(items) {
     }
 }
 
-document.getElementById("drukujBtn").onclick = () => window.print();
+document.getElementById("drukujBtn").onclick = () => {
+
+    const element = document.querySelector(".sheet"); // wszystko na stronie A4
+
+    const opt = {
+        margin:       [0, 0, 0, 0],
+        filename:     'etykiety.pdf',
+        image:        { type: 'jpeg', quality: 1 },
+        html2canvas:  { scale: 4 }, // ostry wydruk
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    html2pdf().set(opt).from(element).save();
+};
+
 loadFromURL();
 </script>
 
