@@ -144,10 +144,13 @@ document.getElementById("drukujBtn").onclick = () => {
     const clone = source.cloneNode(true);
     clone.style.position = "fixed";
     clone.style.left = "-99999px";
+    clone.style.top = "0";
 
-    // 2. Zamieniamy mm → px (96 DPI)
+    // 2. Przeliczenie A4 na px (96 DPI)
     clone.style.width = "794px";   // 210mm
     clone.style.height = "1123px"; // 297mm
+
+    // kopiujemy paddingi w mm → html2canvas przeliczy je automatycznie
     clone.style.paddingTop = window.getComputedStyle(source).paddingTop;
     clone.style.paddingLeft = window.getComputedStyle(source).paddingLeft;
 
@@ -157,7 +160,7 @@ document.getElementById("drukujBtn").onclick = () => {
         margin: 0,
         filename: 'etykiety.pdf',
         image: { type: 'jpeg', quality: 1 },
-        html2canvas: { scale: 4 },
+        html2canvas: { scale: 4 },   // wysoka jakość
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
@@ -167,6 +170,7 @@ document.getElementById("drukujBtn").onclick = () => {
         .save()
         .then(() => clone.remove());
 };
+
 
 
 loadFromURL();
