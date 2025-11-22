@@ -141,8 +141,7 @@ function loadLabels(items) {
 }
 
 /* --- GENEROWANIE PDF A4 --- */
-document.getElementById("drukujBtn").onclick = () => {
-
+function generatePDF() {
     const element = document.querySelector(".sheet");
 
     const opt = {
@@ -153,10 +152,30 @@ document.getElementById("drukujBtn").onclick = () => {
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
-    html2pdf().set(opt).from(element).outputPdf('blob').then((pdfBlob) => {
-    const url = URL.createObjectURL(pdfBlob);
-    window.open(url, '_blank');  // komputer → otwiera się PDF w nowej karcie
-});
+    return html2pdf().set(opt).from(element).outputPdf('blob').then((pdfBlob) => {
+        const url = URL.createObjectURL(pdfBlob);
+        window.location.href = url;  // OTWIERA W TEJ SAMEJ KARCIE
+    });
+}
+
+/* --- FALLBACK: przycisk DRUKUJ --- */
+document.getElementById("drukujBtn").onclick = () => {
+    generatePDF();
+};
+
+/* --- AUTO-GENEROWANIE PDF PO ZAŁADOWANIU STRONY --- */
+window.onload = () => {
+    loadFromURL();  // najpierw załaduj dane do etykiet
+
+    // krótka pauza żeby DOM zdążył wstawić etykiety
+    setTimeout(() => {
+        generatePDF().catch(err => {
+            console.warn("Automatyczne generowanie PDF nie powiodło się:", err);
+            // fallback = przycisk działa normalnie
+        });
+    }, 300);
+};
+
 
 };
 
