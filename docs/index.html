@@ -130,22 +130,22 @@ function loadLabels(items) {
     // ------------------------------------
     // DODANE: TYLKO JEŚLI WYMAGA I SĄ WARTOŚCI
     // ------------------------------------
-    if (item.wymagaDatyZOpakowania) {
+    if ((item.wymagaDatyZOpakowania === true || item.wymagaDatyZOpakowania === "true")) {
 
-        if (item.dataZOpakowania) {
-            const bb = document.createElement("div");
-            bb.className = "subText";
-            bb.innerText = `BB: ${item.dataZOpakowania}`;
-            div.appendChild(bb);
-        }
-
-        if (item.lot) {
-            const lot = document.createElement("div");
-            lot.className = "subText";
-            lot.innerText = `LOT: ${item.lot}`;
-            div.appendChild(lot);
-        }
+    if (item.dataZOpakowania && item.dataZOpakowania !== "undefined" && item.dataZOpakowania !== "null") {
+        const bb = document.createElement("div");
+        bb.className = "subText";
+        bb.innerText = `BB: ${item.dataZOpakowania}`;
+        div.appendChild(bb);
     }
+
+    if (item.lot && item.lot !== "undefined" && item.lot !== "null") {
+        const lot = document.createElement("div");
+        lot.className = "subText";
+        lot.innerText = `LOT: ${item.lot}`;
+        div.appendChild(lot);
+    }
+}
 }
 
 
