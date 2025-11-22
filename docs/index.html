@@ -154,7 +154,11 @@ document.getElementById("drukujBtn").onclick = () => {
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
-    html2pdf().set(opt).from(element).save();
+    html2pdf().set(opt).from(element).outputPdf('blob').then((pdfBlob) => {
+    const url = URL.createObjectURL(pdfBlob);
+    window.open(url, '_blank');  // komputer → otwiera się PDF w nowej karcie
+});
+
 };
 
 /* --- START --- */
